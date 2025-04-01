@@ -3,8 +3,8 @@ package token
 type TokenType string
 
 type TokenPosition struct {
-	Row int32
-	Col int32
+	Row int
+	Col int
 }
 
 type Token struct {
@@ -39,9 +39,10 @@ const (
 	LAND = "&&"
 	LOR  = "||"
 
-	// Delimeters
-	COMMA     = ","
-	SEMICOLON = ";"
+	// Delimiters
+	COMMA    = ","
+	NEWLINE  = "\n"
+	CARRIAGE = "\r"
 
 	LPAREN = "("
 	RPAREN = ")"
