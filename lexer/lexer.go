@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"fmt"
+	// "fmt"
 	"sen/token"
 	"unicode"
 	"unicode/utf8"
@@ -22,29 +22,6 @@ func New(input string) *Lexer {
 	return l
 }
 
-func (l *Lexer) readChar() {
-
-	// Check first for the end of the file
-	if l.readPosition >= len(l.input) {
-		l.ch = 0 // ASCII code for the "NULL" character
-	} else {
-		// Move the char along to the next position
-		r, _ := utf8.DecodeRuneInString(l.input[l.readPosition:])
-		l.ch = r
-	}
-
-	fmt.Printf("Char: %q, Col: %d\n", l.ch, l.col)
-	if l.ch == '\n' || l.ch == '\r' {
-		l.row++
-		l.col = 0
-	} else {
-		l.col++
-	}
-
-	l.position = l.readPosition
-	l.readPosition += 1
-}
-
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
@@ -52,7 +29,6 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
@@ -111,12 +87,12 @@ func (l *Lexer) NextToken() token.Token {
 		if unicode.IsLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdent(tok.Literal) // We've got the string, check to see if it's a keyword
-			tok.Pos = token.TokenPosition{Col: l.col, Row: l.row}
+			tok.Pos = token.TokenPosition{Col: l.col - len(tok.Literal), Row: l.row}
 			return tok
 		} else if unicode.IsDigit(l.ch) {
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
-			tok.Pos = token.TokenPosition{Col: l.col, Row: l.row}
+			tok.Pos = token.TokenPosition{Col: l.col - len(tok.Literal), Row: l.row}
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch, l)
@@ -141,7 +117,6 @@ func (l *Lexer) peekChar() rune {
 		return 0
 	} else {
 		r, _ := utf8.DecodeRuneInString(l.input[l.readPosition:])
-		fmt.Printf("Curchar: %q, Peekchar: %q\n", l.ch, r)
 		return r
 	}
 }
@@ -167,6 +142,31 @@ func (l *Lexer) readNumber() string {
 	for unicode.IsDigit(l.ch) {
 		l.readChar()
 	}
-
 	return l.input[position:l.position]
+}
+
+func (l *Lexer) readChar() {
+
+	// Check first for the end of the file
+	if l.readPosition >= len(l.input) {
+		l.ch = 0 // ASCII code for the "NULL" character
+	} else {
+
+		if l.ch == '\n' || l.ch == '\r' {
+			l.row++
+			l.col = 1
+		} else if l.ch == '\t' {
+			l.col += 4
+		} else {
+			l.col++
+		}
+
+		// Move the char along to the next position
+		r, _ := utf8.DecodeRuneInString(l.input[l.readPosition:])
+		l.ch = r
+
+	}
+
+	l.position = l.readPosition
+	l.readPosition += 1
 }

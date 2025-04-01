@@ -53,8 +53,9 @@ const (
 	RBRACKET = "]"
 
 	// Additional Types
-	STRING = "STRING"
-	COLON  = ":"
+	STRING  = "STRING"
+	COLON   = ":"
+	COMMENT = "//"
 )
 
 // Keywords

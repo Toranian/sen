@@ -1,36 +1,35 @@
 package lexer
 
 import (
-	// "fmt"
+	"fmt"
 	"sen/token"
 	"testing"
 )
 
-// func TestPositioning(t *testing.T) {
-//
-// 	tests := []struct {
-// 		input       string
-// 		expectedCol int
-// 	}{
-// 		{"\t", 3},
-// 		{"let\n", 4},
-// 		{"three\n", 6},
-// 		{"let three\n", 10},
-// 	}
-//
-// 	for i, tt := range tests {
-// 		l := New(tt.input)
-// 		tok := l.NextToken()
-//
-// 		if l.col != tt.expectedCol {
-// 			t.Fatalf("Test[%d] (%q) - Column wrong. Expected=%d, got=%d",
-// 				i, tok.Literal, tt.expectedCol, l.col)
-// 		}
-//
-// 		fmt.Println()
-//
-// 	}
-// }
+func TestPositioning(t *testing.T) {
+
+	tests := []struct {
+		input       string
+		expectedCol int
+	}{
+		{"\tHey", 7},
+		{"let", 3},
+		{"three", 5},
+		{"\n", 1},
+	}
+
+	for i, tt := range tests {
+		l := New(tt.input)
+		tok := l.NextToken()
+
+		if l.col != tt.expectedCol {
+			t.Fatalf("Test[%d] (%q) - Column wrong. Expected=%d, got=%d",
+				i, tok.Literal, tt.expectedCol, l.col)
+		}
+
+		fmt.Println()
+	}
+}
 
 func TestNextToken(t *testing.T) {
 	input := `let three = 3
@@ -40,7 +39,9 @@ let mult = fn(x, y) {
 	x * y
 }
 
-pub class Cat {}`
+pub class Cat {}
+==
+`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -85,7 +86,9 @@ pub class Cat {}`
 		{token.IDENT, "Cat"},
 		{token.LBRACE, "{"},
 		{token.RBRACE, "}"},
-
+		{token.NEWLINE, "\n"},
+		{token.EQ, "=="},
+		{token.NEWLINE, "\n"},
 		{token.EOF, ""},
 	}
 
@@ -101,6 +104,50 @@ pub class Cat {}`
 		if tok.Literal != tt.expectedLiteral {
 			t.Fatalf("Test[%d] - Literal wrong. Expected=%q, got=%q",
 				i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+}
+
+func TestTokenPos(t *testing.T) {
+	input := `let three = 3
+let three = 3`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+		expectedCol     int
+		expectedRow     int
+	}{
+		{token.LET, "let", 1, 1},
+		{token.IDENT, "three", 5, 1},
+		{token.ASSIGN, "=", 11, 1},
+		{token.INT, "3", 13, 1},
+		{token.NEWLINE, "\n", 14, 1},
+
+		// Second line
+		{token.LET, "let", 1, 1},
+		{token.IDENT, "three", 5, 1},
+		{token.ASSIGN, "=", 11, 1},
+		{token.INT, "3", 12, 1},
+		{token.EOF, "", 0, 1},
+	}
+
+	l := New(input)
+
+	for i, tt := range tests {
+		tok := l.NextToken()
+
+		if tok.Type != tt.expectedType {
+			t.Fatalf("Test[%d] - TokenType wrong. Expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("Test[%d] - Literal wrong. Expected=%q, got=%q",
+				i, tt.expectedLiteral, tok.Literal)
+		}
+		if tok.Pos.Col != tt.expectedCol {
+			t.Fatalf("Test[%d] (%q) - Token column wrong. Expected=%d, got=%d",
+				i, tok.Literal, tt.expectedCol, tok.Pos.Col)
 		}
 	}
 }
