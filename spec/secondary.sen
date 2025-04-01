@@ -1,0 +1,18 @@
+mod "secondary"
+
+pub class Cat {
+
+  // Constructor
+  Cat (name, age) {
+    this.name = name
+    this.age = age
+  }
+
+  pub fn speak() {
+    out("My name is " + this.name + " and I'm " + age + "years old. Meow!")
+  }
+
+  pub fn nap(count) {
+    out("purrrr" * count)
+  }
+}

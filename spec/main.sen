@@ -1,0 +1,6 @@
+import "std"
+import "secondary"
+
+let myCat = Cat("Charles", 5)
+myCat.speak()
+>> My name is Charles and I'm 5 years old. Meow!
