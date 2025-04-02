@@ -211,7 +211,21 @@ func TestTokens(t *testing.T) {
 		{token.ASSIGN, "="},
 		{token.EQ, "=="},
 		{token.NOT_EQ, "!="},
-
+		{token.PLUS, "+"},
+		{token.MINUS, "-"},
+		{token.ASTERISK, "*"},
+		{token.SLASH, "/"},
+		{token.BANG, "!"},
+		{token.LT, "<"},
+		{token.GT, ">"},
+		{token.LPAREN, "("},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RBRACE, "}"},
+		{token.LBRACKET, "["},
+		{token.RBRACKET, "]"},
+		{token.COLON, ":"},
+		{token.COMMA, ","},
 		{token.EOF, ""},
 	}
 
