@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	// "fmt"
 	"sen/token"
 	"unicode"
 	"unicode/utf8"
@@ -45,7 +44,17 @@ func (l *Lexer) NextToken() token.Token {
 	case '*':
 		tok = newToken(token.ASTERISK, l.ch, l)
 	case '/':
-		tok = newToken(token.SLASH, l.ch, l)
+
+		if l.peekChar() == '/' {
+			// ch := l.ch
+			tok.Pos = token.TokenPosition{Row: l.row, Col: l.col}
+			tok.Literal = l.readComment()
+			tok.Type = token.COMMENT
+			return tok
+
+		} else {
+			tok = newToken(token.SLASH, l.ch, l)
+		}
 
 	// Comparisons
 	case '<':
@@ -85,14 +94,14 @@ func (l *Lexer) NextToken() token.Token {
 		// If it's none of our tokens, then it's gotta be an identifier!
 	default:
 		if unicode.IsLetter(l.ch) {
+			tok.Pos = token.TokenPosition{Col: l.col, Row: l.row}
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdent(tok.Literal) // We've got the string, check to see if it's a keyword
-			tok.Pos = token.TokenPosition{Col: l.col - len(tok.Literal), Row: l.row}
 			return tok
 		} else if unicode.IsDigit(l.ch) {
+			tok.Pos = token.TokenPosition{Col: l.col, Row: l.row}
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
-			tok.Pos = token.TokenPosition{Col: l.col - len(tok.Literal), Row: l.row}
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch, l)
@@ -169,4 +178,15 @@ func (l *Lexer) readChar() {
 
 	l.position = l.readPosition
 	l.readPosition += 1
+}
+
+func (l *Lexer) readComment() string {
+
+	position := l.position
+
+	for l.ch != '\n' && l.ch != '\r' && l.ch != 0 {
+		l.readChar()
+	}
+
+	return l.input[position:l.position]
 }

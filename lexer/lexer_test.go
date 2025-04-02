@@ -110,7 +110,8 @@ pub class Cat {}
 
 func TestTokenPos(t *testing.T) {
 	input := `let three = 3
-let three = 3`
+let three = 3
+// comment`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -128,7 +129,10 @@ let three = 3`
 		{token.LET, "let", 1, 1},
 		{token.IDENT, "three", 5, 1},
 		{token.ASSIGN, "=", 11, 1},
-		{token.INT, "3", 12, 1},
+		{token.INT, "3", 13, 1},
+		// Comment line
+		{token.NEWLINE, "\n", 14, 1},
+		{token.COMMENT, "// comment", 1, 1},
 		{token.EOF, "", 0, 1},
 	}
 
