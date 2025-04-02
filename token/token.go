@@ -40,9 +40,8 @@ const (
 	LOR  = "||"
 
 	// Delimiters
-	COMMA    = ","
-	NEWLINE  = "\n"
-	CARRIAGE = "\r"
+	COMMA   = ","
+	NEWLINE = "\n"
 
 	LPAREN = "("
 	RPAREN = ")"

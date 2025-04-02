@@ -58,6 +58,15 @@ func (l *Lexer) NextToken() token.Token {
 			tok = newToken(token.SLASH, l.ch, l)
 		}
 
+	case '!':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.NOT_EQ, Literal: string(ch) + string(l.ch), Pos: token.TokenPosition{Row: l.row, Col: l.col}}
+		} else {
+			tok = newToken(token.BANG, l.ch, l)
+		}
+
 	// Comparisons
 	case '<':
 		tok = newToken(token.LT, l.ch, l)

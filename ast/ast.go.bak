@@ -7,7 +7,7 @@ import (
 )
 
 type Node interface {
-	TokenLiteral() string // Only used for debugging and testing.
+	TokenLiteral() string // Allows us to see what the node contains
 	String() string
 }
 
@@ -21,7 +21,8 @@ type Expression interface {
 	expressionNode()
 }
 
-// Series of statements
+// A program is a series of statements.
+// Can also think of it conceptually as a file to run.
 type Program struct {
 	Statements []Statement
 }
@@ -34,6 +35,7 @@ func (p *Program) TokenLiteral() string {
 	}
 }
 
+// Iterate over all statements in the program and return them as a string.
 func (p *Program) String() string {
 	var out bytes.Buffer
 
@@ -149,6 +151,7 @@ func (pe *PrefixExpression) String() string {
 	return out.String()
 }
 
+// ------ INFIX EXPRESSIONS ----------
 type InfixExpression struct {
 	Token    token.Token // The operator token, e.g. *, +, -, /
 	Left     Expression
@@ -170,6 +173,7 @@ func (oe *InfixExpression) String() string {
 	return out.String()
 }
 
+// ------ BOOLEAN EXPRESSIONS ----------
 type Boolean struct {
 	Token token.Token
 	Value bool
@@ -179,6 +183,7 @@ func (b *Boolean) expressionNode()      {}
 func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
 func (b *Boolean) String() string       { return b.Token.Literal }
 
+// ------ IF EXPRESSIONS ----------
 type IfExpression struct {
 	Token       token.Token
 	Condition   Expression
@@ -204,6 +209,7 @@ func (ie *IfExpression) String() string {
 	return out.String()
 }
 
+// ------- Block Statements -------
 type BlockStatement struct {
 	Token      token.Token
 	Statements []Statement
@@ -220,6 +226,7 @@ func (bs *BlockStatement) String() string {
 	return out.String()
 }
 
+// ------- Function Literals -------
 type FunctionLiteral struct {
 	Token      token.Token
 	Parameters []*Identifier
@@ -245,6 +252,7 @@ func (fl *FunctionLiteral) String() string {
 	return out.String()
 }
 
+// ------ CALL EXPRESSION ----------
 type CallExpression struct {
 	Token     token.Token
 	Function  Expression
@@ -270,6 +278,7 @@ func (ce *CallExpression) String() string {
 	return out.String()
 }
 
+// ------ STRING LITERALS ----------
 type StringLiteral struct {
 	Token token.Token
 	Value string
@@ -279,6 +288,7 @@ func (sl *StringLiteral) expressionNode()      {}
 func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
 func (sl *StringLiteral) String() string       { return sl.Token.Literal }
 
+// ------ ARRAY LITERALS ----------
 type ArrayLiteral struct {
 	Token    token.Token // the '[' token
 	Elements []Expression
@@ -299,6 +309,7 @@ func (al *ArrayLiteral) String() string {
 
 }
 
+// ------ INDEX EXPRESSIONS ----------
 type IndexExpression struct {
 	Token token.Token
 	Left  Expression
@@ -317,6 +328,7 @@ func (ie *IndexExpression) String() string {
 	return out.String()
 }
 
+// ------ HASH EXPRESSIONS ----------
 type HashLiteral struct {
 	Token token.Token
 	Pairs map[Expression]Expression
