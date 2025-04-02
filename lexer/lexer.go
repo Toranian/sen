@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	// "fmt"
 	"sen/token"
 	"unicode"
 	"unicode/utf8"
@@ -18,6 +19,7 @@ type Lexer struct {
 func New(input string) *Lexer {
 	l := &Lexer{input: input}
 	l.readChar() // Get the first position of the input
+	l.row = 1
 	return l
 }
 
@@ -85,7 +87,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '\n':
 		tok = newToken(token.NEWLINE, l.ch, l)
 	case '\r':
-		tok = newToken(token.CARRIAGE, l.ch, l)
+		tok = newToken(token.NEWLINE, l.ch, l)
 
 	case 0:
 		tok.Literal = ""
@@ -160,7 +162,6 @@ func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0 // ASCII code for the "NULL" character
 	} else {
-
 		if l.ch == '\n' || l.ch == '\r' {
 			l.row++
 			l.col = 1

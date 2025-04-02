@@ -126,14 +126,14 @@ let three = 3
 		{token.NEWLINE, "\n", 14, 1},
 
 		// Second line
-		{token.LET, "let", 1, 1},
-		{token.IDENT, "three", 5, 1},
-		{token.ASSIGN, "=", 11, 1},
-		{token.INT, "3", 13, 1},
+		{token.LET, "let", 1, 2},
+		{token.IDENT, "three", 5, 2},
+		{token.ASSIGN, "=", 11, 2},
+		{token.INT, "3", 13, 2},
 		// Comment line
-		{token.NEWLINE, "\n", 14, 1},
-		{token.COMMENT, "// comment", 1, 1},
-		{token.EOF, "", 0, 1},
+		{token.NEWLINE, "\n", 14, 2},
+		{token.COMMENT, "// comment", 1, 3},
+		{token.EOF, "", 0, 0},
 	}
 
 	l := New(input)
@@ -152,6 +152,50 @@ let three = 3
 		if tok.Pos.Col != tt.expectedCol {
 			t.Fatalf("Test[%d] (%q) - Token column wrong. Expected=%d, got=%d",
 				i, tok.Literal, tt.expectedCol, tok.Pos.Col)
+		}
+
+		if tok.Pos.Row != tt.expectedRow {
+			t.Fatalf("Test[%d] (%q) - Token row wrong. Expected=%d, got=%d",
+				i, tok.Literal, tt.expectedRow, tok.Pos.Row)
+		}
+	}
+}
+
+func TestLineEndings(t *testing.T) {
+
+	input := `
+return 5
+return 10
+return 50`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.NEWLINE, "\n"},
+		{token.RETURN, "return"},
+		{token.INT, "5"},
+		{token.NEWLINE, "\n"},
+		{token.RETURN, "return"},
+		{token.INT, "10"},
+		{token.NEWLINE, "\n"},
+		{token.RETURN, "return"},
+		{token.INT, "50"},
+		{token.EOF, ""},
+	}
+
+	l := New(input)
+
+	for i, tt := range tests {
+		tok := l.NextToken()
+
+		if tok.Type != tt.expectedType {
+			t.Fatalf("Test[%d] - TokenType wrong. Expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("Test[%d] - Literal wrong. Expected=%q, got=%q",
+				i, tt.expectedLiteral, tok.Literal)
 		}
 	}
 }
