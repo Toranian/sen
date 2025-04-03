@@ -41,7 +41,7 @@ const (
 
 	// Delimiters
 	COMMA   = ","
-	NEWLINE = "\n"
+	NEWLINE = "\\n"
 
 	LPAREN = "("
 	RPAREN = ")"

@@ -58,6 +58,8 @@ func New(l *lexer.Lexer) *Parser {
 		errors: []string{},
 	}
 
+	// fn add(2, 3) {}
+
 	// Prefix
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
@@ -72,7 +74,6 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.STRING, p.parseStringLiteral)
 	p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
 	p.registerPrefix(token.LBRACE, p.parseHashLiteral)
-	// p.registerPrefix(token.NEWLINE, p.parseNewline)
 
 	// Infix
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
@@ -134,7 +135,17 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseLetStatement()
 
 	case token.RETURN:
+		fmt.Println("Return statmenet foun")
 		return p.parseReturnStatement()
+
+	case token.FUNCTION:
+		val := p.parseFunctionStatement()
+
+		// If it's not a function statement, we've probably encountered a literal function instead
+		if val != nil {
+			return val
+		}
+		return p.parseExpressionStatement()
 
 	default:
 		return p.parseExpressionStatement()
@@ -209,11 +220,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	stmt.ReturnValue = p.parseExpression(LOWEST)
 
 	// Skip until the end for now
-	// for !p.curTokenIs(token.EOF) && !p.curTokenIs(token.NEWLINE) {
-	// 	p.nextToken()
-	// }
-
-	for p.curTokenNotEndOfLine() {
+	for !p.curTokenIs(token.EOF) && !p.curTokenIs(token.NEWLINE) {
 		p.nextToken()
 	}
 
@@ -415,7 +422,39 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 
 }
 
+func (p *Parser) parseFunctionStatement() *ast.FunctionStatement {
+
+	stmt := &ast.FunctionStatement{Token: p.curToken}
+
+	if p.peekTokenIs(token.LPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(token.IDENT) {
+		return nil
+	}
+
+	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	// stmt.Value
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	stmt.Parameters = p.parseFunctionParameters()
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	stmt.Body = p.parseBlockStatement()
+
+	return stmt
+
+}
+
 func (p *Parser) parseFunctionLiteral() ast.Expression {
+
 	lit := &ast.FunctionLiteral{Token: p.curToken}
 
 	if !p.expectPeek(token.LPAREN) {

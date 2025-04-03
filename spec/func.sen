@@ -1,0 +1,9 @@
+fn mult(x, y) {
+  x * y
+}
+
+let add = fn(x,y) {x + y}
+
+
+out(mult(3, 7))
+//out(add(3, 7))

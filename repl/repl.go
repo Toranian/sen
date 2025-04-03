@@ -70,7 +70,11 @@ func Run(filename string) {
 
 	program := p.ParseProgram()
 	if len(p.Errors()) != 0 {
-		printParserErrors(os.Stdout, p.Errors())
+		fmt.Printf("Encountered errors when parsing:\n")
+		fmt.Printf("Num errors: %d", len(p.Errors()))
+		for _, msg := range p.Errors() {
+			fmt.Printf("\t%s \n", msg)
+		}
 		os.Exit(1)
 	}
 

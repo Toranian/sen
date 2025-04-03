@@ -41,6 +41,7 @@ let mult = fn(x, y) {
 
 pub class Cat {}
 ==
+return
 `
 
 	tests := []struct {
@@ -88,6 +89,8 @@ pub class Cat {}
 		{token.RBRACE, "}"},
 		{token.NEWLINE, "\n"},
 		{token.EQ, "=="},
+		{token.NEWLINE, "\n"},
+		{token.RETURN, "return"},
 		{token.NEWLINE, "\n"},
 		{token.EOF, ""},
 	}
@@ -226,6 +229,71 @@ func TestTokens(t *testing.T) {
 		{token.RBRACKET, "]"},
 		{token.COLON, ":"},
 		{token.COMMA, ","},
+		{token.EOF, ""},
+	}
+
+	l := New(input)
+
+	for i, tt := range tests {
+		tok := l.NextToken()
+
+		if tok.Type != tt.expectedType {
+			t.Fatalf("Test[%d] - TokenType wrong. Expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("Test[%d] - Literal wrong. Expected=%q, got=%q",
+				i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+}
+
+func TestNamedFunctions(t *testing.T) {
+
+	input := `fn add(x, y)`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.FUNCTION, "fn"},
+		{token.IDENT, "add"},
+		{token.LPAREN, "("},
+		{token.IDENT, "x"},
+		{token.COMMA, ","},
+		{token.IDENT, "y"},
+		{token.RPAREN, ")"},
+		{token.EOF, ""},
+	}
+
+	l := New(input)
+
+	for i, tt := range tests {
+		tok := l.NextToken()
+
+		if tok.Type != tt.expectedType {
+			t.Fatalf("Test[%d] - TokenType wrong. Expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("Test[%d] - Literal wrong. Expected=%q, got=%q",
+				i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+}
+
+func TestEOF(t *testing.T) {
+
+	input := `
+
+`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.NEWLINE, "\n"},
+		{token.NEWLINE, "\n"},
 		{token.EOF, ""},
 	}
 
