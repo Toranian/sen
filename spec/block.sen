@@ -1,0 +1,10 @@
+let x = 10
+fn add(x, y) {x + y}
+
+if (x > 10) {
+  let var =  add(1,0)
+  out(var)
+} else {
+  let var =  add(1,1)
+  out(var)
+}

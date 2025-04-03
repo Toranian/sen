@@ -99,13 +99,13 @@ func New(l *lexer.Lexer) *Parser {
 
 // Advance the current and peek token. Similar to "readChar()" in lexer.
 func (p *Parser) nextToken() {
+	fmt.Printf("Token: %s | Value: %s\n", p.curToken.Type, p.curToken.Literal)
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
 
 // Refer to page 36 for pseudocode.
 func (p *Parser) ParseProgram() *ast.Program {
-	// Create the root node
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 
@@ -116,22 +116,21 @@ func (p *Parser) ParseProgram() *ast.Program {
 		}
 
 		// Determine the type of statement. Let, return, etc.
+		// fmt.Println()
 		stmt := p.parseStatement()
 
 		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
 		}
-
-		// Advances current and peak tokens
 		p.nextToken()
 	}
-
 	return program
 }
 
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
+		fmt.Println("FOUND LET")
 		return p.parseLetStatement()
 
 	case token.RETURN:
@@ -213,6 +212,7 @@ func (p *Parser) peekError(t token.TokenType) {
 }
 
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	fmt.Println("Fuck bitch")
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 
 	p.nextToken()
@@ -220,7 +220,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	stmt.ReturnValue = p.parseExpression(LOWEST)
 
 	// Skip until the end for now
-	for !p.curTokenIs(token.EOF) && !p.curTokenIs(token.NEWLINE) {
+	for p.peekTokenIs(token.NEWLINE) {
 		p.nextToken()
 	}
 
@@ -404,22 +404,28 @@ func (p *Parser) parseIfExpression() ast.Expression {
 }
 
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
+	fmt.Println("---START block statement")
 	block := &ast.BlockStatement{Token: p.curToken}
 	block.Statements = []ast.Statement{}
 
 	p.nextToken()
 
 	for !p.curTokenIs(token.RBRACE) && !p.curTokenIs(token.EOF) {
+
+		// Super important! If we don't skip over comments or newlines, then we get off by one!!
+		for p.curTokenIs(token.NEWLINE) || p.curTokenIs(token.COMMENT) {
+			p.nextToken()
+		}
 		stmt := p.parseStatement()
+
 		if stmt != nil {
 			block.Statements = append(block.Statements, stmt)
 		}
-
 		p.nextToken()
 	}
+	fmt.Println("---END  block statement")
 
 	return block
-
 }
 
 func (p *Parser) parseFunctionStatement() *ast.FunctionStatement {
@@ -454,7 +460,6 @@ func (p *Parser) parseFunctionStatement() *ast.FunctionStatement {
 }
 
 func (p *Parser) parseFunctionLiteral() ast.Expression {
-
 	lit := &ast.FunctionLiteral{Token: p.curToken}
 
 	if !p.expectPeek(token.LPAREN) {

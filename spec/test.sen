@@ -1,8 +1,4 @@
-// Adds two variables together
-let add = fn(x, y) {
- x + y
+fn add(x, y) {
+   let a = x + y
 }
-
-let arr = [1, 2, 3, 4, 5]
 out(add(1,2))
-
