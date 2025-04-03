@@ -110,7 +110,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 	for !p.curTokenIs(token.EOF) {
 
-		for p.curTokenIs(token.NEWLINE) {
+		for p.curTokenIs(token.NEWLINE) || p.curTokenIs(token.COMMENT) {
 			p.nextToken()
 		}
 

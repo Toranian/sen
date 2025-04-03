@@ -67,6 +67,10 @@ func (l *Lexer) NextToken() token.Token {
 			tok = newToken(token.BANG, l.ch, l)
 		}
 
+	case '"':
+		tok.Type = token.STRING
+		tok.Literal = l.readString()
+
 	// Comparisons
 	case '<':
 		tok = newToken(token.LT, l.ch, l)
@@ -198,5 +202,17 @@ func (l *Lexer) readComment() string {
 		l.readChar()
 	}
 
+	return l.input[position:l.position]
+}
+
+func (l *Lexer) readString() string {
+	position := l.position + 1
+	for {
+		l.readChar()
+
+		if l.ch == '"' || l.ch == 0 {
+			break
+		}
+	}
 	return l.input[position:l.position]
 }

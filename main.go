@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-	fmt.Println("Sen Programming Language")
 
 	// Check if a file is passed as an argument
 	if len(os.Args) > 1 {

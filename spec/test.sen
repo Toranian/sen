@@ -1,5 +1,11 @@
+// Adds two variables together
+let add = fn(x, y) {
+  x + y
+}
 
-return 5
-return 10
-return 993322
+let arr = [1, 2, 3, 4, 5]
+
+out(add(2, 3))
+
+
 
