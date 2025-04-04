@@ -363,3 +363,49 @@ func (hl *HashLiteral) String() string {
 	out.WriteString("}")
 	return out.String()
 }
+
+type WhileStatement struct {
+	Token     token.Token     // the 'while' token
+	Condition Expression      // the condition for the while loop
+	Body      *BlockStatement // the body of the loop
+}
+
+func (ws *WhileStatement) statementNode()       {}
+func (ws *WhileStatement) TokenLiteral() string { return ws.Token.Literal }
+func (ws *WhileStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("while(")
+	out.WriteString(ws.Condition.String())
+	out.WriteString(")")
+	out.WriteString("{")
+	out.WriteString(ws.Body.String())
+	out.WriteString("}")
+
+	return out.String()
+}
+
+type BreakStatement struct {
+	Token token.Token // the 'break' token
+}
+
+type WhileExpression struct {
+	Token     token.Token     // the 'while' token
+	Condition Expression      // the condition for the while loop
+	Body      *BlockStatement // the body of the loop
+}
+
+func (ws *WhileExpression) expressionNode()      {}
+func (ws *WhileExpression) TokenLiteral() string { return ws.Token.Literal }
+func (ws *WhileExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("while(")
+	out.WriteString(ws.Condition.String())
+	out.WriteString(")")
+	out.WriteString("{")
+	out.WriteString(ws.Body.String())
+	out.WriteString("}")
+
+	return out.String()
+}

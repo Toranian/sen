@@ -6,4 +6,5 @@ fn mult(x, y) {
 let add = fn(x,y) {x + y}
 
 
+
 out(mult(3, 7))

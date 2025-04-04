@@ -70,6 +70,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.FALSE, p.parseBoolean)
 	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.IF, p.parseIfExpression)
+	p.registerPrefix(token.WHILE, p.parseWhileExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.STRING, p.parseStringLiteral)
 	p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
@@ -99,7 +100,7 @@ func New(l *lexer.Lexer) *Parser {
 
 // Advance the current and peek token. Similar to "readChar()" in lexer.
 func (p *Parser) nextToken() {
-	fmt.Printf("Token: %s | Value: %s\n", p.curToken.Type, p.curToken.Literal)
+	// fmt.Printf("Token: %s | Value: %s\n", p.curToken.Type, p.curToken.Literal)
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
@@ -130,7 +131,6 @@ func (p *Parser) ParseProgram() *ast.Program {
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
-		fmt.Println("FOUND LET")
 		return p.parseLetStatement()
 
 	case token.RETURN:
@@ -368,6 +368,29 @@ func (p *Parser) parseGroupedExpression() ast.Expression {
 	return exp
 }
 
+func (p *Parser) parseWhileExpression() ast.Expression {
+	stmt := &ast.WhileExpression{Token: p.curToken}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	p.nextToken()
+	stmt.Condition = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	stmt.Body = p.parseBlockStatement()
+
+	return stmt
+}
+
 func (p *Parser) parseIfExpression() ast.Expression {
 	expression := &ast.IfExpression{Token: p.curToken}
 
@@ -404,13 +427,13 @@ func (p *Parser) parseIfExpression() ast.Expression {
 }
 
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
-	fmt.Println("---START block statement")
+	// fmt.Println("\n---START block statement")
 	block := &ast.BlockStatement{Token: p.curToken}
 	block.Statements = []ast.Statement{}
 
 	p.nextToken()
 
-	for !p.curTokenIs(token.RBRACE) && !p.curTokenIs(token.EOF) {
+	for !p.curTokenIs(token.EOF) && !p.curTokenIs(token.RBRACE) {
 
 		// Super important! If we don't skip over comments or newlines, then we get off by one!!
 		for p.curTokenIs(token.NEWLINE) || p.curTokenIs(token.COMMENT) {
@@ -423,7 +446,7 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 		}
 		p.nextToken()
 	}
-	fmt.Println("---END  block statement")
+	// fmt.Println("---END  block statement")
 
 	return block
 }
