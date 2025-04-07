@@ -1,10 +1,10 @@
-let x = 0
+x = 0
 
 // Hey! Comments are supported 😎
 fn countTo(x) {
   let a = 0
   while (a < x) {
-    let a = a + 1
+    a = a + 1
     out(a)
   }
 }

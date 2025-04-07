@@ -50,6 +50,8 @@ type Parser struct {
 
 	prefixParseFns map[token.TokenType]prefixParseFn
 	infixParseFns  map[token.TokenType]infixParseFn
+
+	defined []string
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -100,7 +102,7 @@ func New(l *lexer.Lexer) *Parser {
 
 // Advance the current and peek token. Similar to "readChar()" in lexer.
 func (p *Parser) nextToken() {
-	// fmt.Printf("Token: %s | Value: %s\n", p.curToken.Type, p.curToken.Literal)
+	fmt.Printf("Token: %s | Value: %s\n", p.curToken.Type, p.curToken.Literal)
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
@@ -132,6 +134,13 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
+	
+	case token.IDENT:
+		val := p.parseAssignmentStatement()
+		if val != nil {return val}
+		// return val
+		return p.parseExpressionStatement() 
+
 
 	case token.RETURN:
 		fmt.Println("Return statmenet foun")
@@ -149,6 +158,40 @@ func (p *Parser) parseStatement() ast.Statement {
 	default:
 		return p.parseExpressionStatement()
 	}
+}
+
+
+func (p *Parser) parseAssignmentStatement() *ast.LetStatement {
+	// type  IDENT --> Name
+	// let   x = 3;
+	stmt := &ast.LetStatement{Token: p.curToken}
+
+	// fmt.Printf("Cur token: %s\n", p.curToken)
+	// If the next token is not '=', then we just have an ident. Return.
+	if !p.peekTokenIs(token.ASSIGN) {
+		return nil
+	}
+
+	fmt.Printf("In parse assignment: %s\n", p.curToken.Literal)
+
+	// This is the identifier of the let statement.
+	// The user can name it whatever they want, so we refer to the
+	// identifer as "name"
+	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+	p.nextToken()
+	p.nextToken()
+	// fmt.Printf("Cur token: %s\n", p.curToken.Literal)
+
+
+	stmt.Value = p.parseExpression(LOWEST)
+	// fmt.Printf("Cur token: %s\n", p.curToken)
+
+	if p.endOfLine() {
+		p.nextToken()
+	}
+
+	return stmt
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
