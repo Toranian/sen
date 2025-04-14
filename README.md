@@ -1,6 +1,6 @@
 # Sen Programming Language
 
-A simple programming language written in Go. Based off of the "Monkey" programming language.
+A simple programming language interpreter written in Go. It features a Go and Rust-like syntax, with the absence of semicolons. Although the language is quite simple, it's also powerful. The initial implementation is based off of the "Monkey" programming language, which you can learn more about (here.)[https://monkeylang.org/]
 
 ## Features
 
@@ -16,6 +16,7 @@ The programming language features:
 - Function statements and literals
 - Closures
 - Block statements and scope
+- Errors that state where the error occured
 
 ## Future Goals
 
@@ -26,9 +27,13 @@ The programming language features:
 - Sen as an executable file
 - For loops
 
-## Running Code
+## Running Code Files
 
 To run Sen code, write the code in a `.sen` file. To execute: `go run main.go <path to .sen file>`
+
+## Running via REPL
+
+To try Sen out through the Read-eval-print-loop, just run `go run main.go` and you'll be able to interact with it.
 
 ## Examples
 
@@ -58,6 +63,24 @@ arr = [1, 2, 3, 4, 5, 6]
 // "out" outputs values to the console
 out(map(arr, square))
 //>>> [1, 4, 9, 16, 25, 36]
+
+
+```
+
+Closures Example
+
+```rust
+fn makeMult(a, b) {
+  fn(c) {a * b * c}
+}
+
+// This will create a new function that will multiply our number by 10
+mult = makeMult(2, 5)
+
+// 2 * 5 * 5 = 50
+out(mult(5))
+
+//>>> 50
 ```
 
 For a more detailed writeup, view the full blog post at (www.isaacmorrow.me/posts/sen)[https://isaacmorrow.me/posts/sen]

@@ -1,0 +1,11 @@
+fn makeMult(a, b) {
+  fn(c) {a * b * c}
+}
+
+// This will create a new function that will multiply our number by 10
+mult = makeMult(2, 5)
+
+// 2 * 5 * 5 = 50
+out(mult(5))
+
+//>>> 50
