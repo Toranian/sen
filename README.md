@@ -1,6 +1,6 @@
 # Sen Programming Language
 
-A simple programming language interpreter written in Go. It features a Go and Rust-like syntax, with the absence of semicolons. Although the language is quite simple, it's also powerful. The initial implementation is based off of the "Monkey" programming language, which you can learn more about (here.)[https://monkeylang.org/]
+A simple programming language interpreter written in Go. It features a Go and Rust-like syntax, with the absence of semicolons. Although the language is quite simple, it's also powerful. The initial implementation is based off of the "Monkey" programming language, which you can learn more about [here.](https://monkeylang.org/)
 
 ## Features
 
@@ -83,4 +83,4 @@ out(mult(5))
 //>>> 50
 ```
 
-For a more detailed writeup, view the full blog post at (www.isaacmorrow.me/posts/sen)[https://isaacmorrow.me/posts/sen]
+For a more detailed writeup, view the full blog post at [www.isaacmorrow.me/posts/sen](https://isaacmorrow.me/posts/sen)
