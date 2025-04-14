@@ -1,14 +1,39 @@
 x = 0
 
-// Hey! Comments are supported 😎
+// Hey! Comments are supported
 fn countTo(x) {
   let a = 0
   while (a < x) {
     a = a + 1
+
+    // Will exit the loop
+    if (a > 5) {
+      break
+    }
+
+    // Log the result to the console
     out(a)
   }
 }
 
-countTo(10)
 
-out("Sen also supports UTF-8!! 😎")
+fn map(array, func) {
+  length = len(array)
+  mapped = []
+  count = 0
+
+  while (count < length) {
+    mapped = push(mapped, func(array[count]))
+    count = count + 1
+  }
+
+  return mapped
+}
+
+
+fn compare(x) {
+  x * x
+}
+
+arr = [1, 2, 3, 4, 5, 6]
+out(map(arr, compare))

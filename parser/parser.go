@@ -102,7 +102,7 @@ func New(l *lexer.Lexer) *Parser {
 
 // Advance the current and peek token. Similar to "readChar()" in lexer.
 func (p *Parser) nextToken() {
-	fmt.Printf("Token: %s | Value: %s\n", p.curToken.Type, p.curToken.Literal)
+	// fmt.Printf("Token: %s | Value: %s\n", p.curToken.Type, p.curToken.Literal)
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
@@ -172,7 +172,6 @@ func (p *Parser) parseAssignmentStatement() *ast.LetStatement {
 		return nil
 	}
 
-	fmt.Printf("In parse assignment: %s\n", p.curToken.Literal)
 
 	// This is the identifier of the let statement.
 	// The user can name it whatever they want, so we refer to the
@@ -255,7 +254,6 @@ func (p *Parser) peekError(t token.TokenType) {
 }
 
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
-	fmt.Println("Fuck bitch")
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 
 	p.nextToken()

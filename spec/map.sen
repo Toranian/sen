@@ -1,0 +1,12 @@
+fn map(iterable, func) {
+    result = [] // Initialize the result array
+    count = 0
+    while (count < len(iterable)) {
+        result = push(result, func(iterable[count]))
+        count = count + 1
+    }
+    return result 
+}
+
+arr = [1, 2, 3, 4, 5, 6]
+out(map(arr, fn(x) {x * x}))
